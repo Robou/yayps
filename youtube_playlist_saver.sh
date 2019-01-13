@@ -24,14 +24,19 @@ topdepart="no"
 
 run(){
 	read -p 'Nom du fichier de sortie ?' out
-	echo "Fichier de sortie : $out"
+	echo "Fichier de sortie : BACKUP_Youtube_playlist-$out.txt"
 
 	read -p "adresse de la playlist à recopier ?" playlist_url
 	echo "url de la playlist : $playlist_url"
+	
+	fichier_de_sortie=BACKUP_Youtube_playlist-$out.csv
 
 	echo "Début de l'analyse..."
-	youtube-dl -e --no-warnings -i $playlist_url | tee -i BACKUP_Youtube_playlist-$out.txt
+	youtube-dl --get-title --get-id --no-warnings --no-mark-watched --ignore-errors $playlist_url | tee -i $fichier_de_sortie
 
+	# Réécriture du fichier sous la forme "Tire" - tabulation - "ID de la vidéo" :
+    	paste  - - < $fichier_de_sortie|tee -i $fichier_de_sortie
+	
 	notify-send "YAYPS / Analyse de la playlist terminée !"
 	echo Done.
 }
